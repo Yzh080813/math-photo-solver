@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../models/record.dart';
 import '../services/ai_service.dart';
 
 class ResultPage extends StatefulWidget {

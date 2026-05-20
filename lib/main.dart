@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'services/ai_service.dart';
+import 'pages/home_page.dart';
+import 'pages/settings_page.dart';
 
 void main() {
   runApp(const MathPhotoApp());
@@ -10,29 +14,85 @@ class MathPhotoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Math Photo Solver',
+      title: '数学拍照解题',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorSchemeSeed: Colors.blue,
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const _AppEntry(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class _AppEntry extends StatefulWidget {
+  const _AppEntry();
+
+  @override
+  State<_AppEntry> createState() => _AppEntryState();
+}
+
+class _AppEntryState extends State<_AppEntry> {
+  bool _checking = true;
+  bool _hasApiKey = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkApiKey();
+  }
+
+  Future<void> _checkApiKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = prefs.getString('api_key');
+    setState(() {
+      _hasApiKey = key != null && key.isNotEmpty;
+      _checking = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Math Photo Solver'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: const Center(
-        child: Text('Welcome to Math Photo Solver!'),
-      ),
+    if (_checking) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (!_hasApiKey) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('设置 API Key')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.key, size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              const Text('请先设置 API Key 才能使用', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 24),
+              SettingsPage(),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return FutureBuilder<String>(
+      future: _getApiKey(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        return HomePage(aiService: AiService(apiKey: snapshot.data!));
+      },
     );
+  }
+
+  Future<String> _getApiKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('api_key') ?? '';
   }
 }
