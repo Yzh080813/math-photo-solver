@@ -62,8 +62,7 @@ class _AppEntryState extends State<_AppEntry> {
     if (!_hasApiKey) {
       return Scaffold(
         appBar: AppBar(title: const Text('设置 API Key')),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
+        body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -71,7 +70,15 @@ class _AppEntryState extends State<_AppEntry> {
               const SizedBox(height: 16),
               const Text('请先设置 API Key 才能使用', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 24),
-              SettingsPage(),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SettingsPage()),
+                  );
+                },
+                child: const Text('前往设置'),
+              ),
             ],
           ),
         ),

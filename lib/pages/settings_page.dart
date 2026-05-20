@@ -43,30 +43,52 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('设置')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text('API Key', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                hintText: '输入你的 Claude API Key',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
+      body: _SettingsForm(
+        controller: _controller,
+        saved: _saved,
+        onSave: _saveApiKey,
+      ),
+    );
+  }
+}
+
+class _SettingsForm extends StatelessWidget {
+  final TextEditingController controller;
+  final bool saved;
+  final VoidCallback onSave;
+
+  const _SettingsForm({
+    required this.controller,
+    required this.saved,
+    required this.onSave,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('API Key', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              hintText: '输入你的 Claude API Key',
+              border: OutlineInputBorder(),
             ),
-            const SizedBox(height: 8),
-            const Text('需要 Anthropic API Key。在 console.anthropic.com 获取。', style: TextStyle(color: Colors.grey, fontSize: 12)),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _saveApiKey,
-              child: Text(_saved ? '已保存 ✓' : '保存'),
-            ),
-          ],
-        ),
+            obscureText: true,
+          ),
+          const SizedBox(height: 8),
+          const Text('需要 Anthropic API Key。在 console.anthropic.com 获取。', style: TextStyle(color: Colors.grey, fontSize: 12)),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onSave,
+            child: Text(saved ? '已保存 ✓' : '保存'),
+          ),
+        ],
       ),
     );
   }

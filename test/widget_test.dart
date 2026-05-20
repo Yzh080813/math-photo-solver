@@ -1,11 +1,19 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:math_photo_app/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('App displays welcome text', (WidgetTester tester) async {
+  testWidgets('App shows API key setup when no key is configured', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const MathPhotoApp());
 
-    expect(find.text('Math Photo Solver'), findsOneWidget);
-    expect(find.text('Welcome to Math Photo Solver!'), findsOneWidget);
+    // Initial loading state
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    // After loading completes, should show API key setup
+    await tester.pumpAndSettle();
+    expect(find.text('设置 API Key'), findsOneWidget);
+    expect(find.text('请先设置 API Key 才能使用'), findsOneWidget);
   });
 }
