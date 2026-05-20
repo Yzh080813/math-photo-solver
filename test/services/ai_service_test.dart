@@ -142,13 +142,16 @@ void main() {
       final mockClient = MockClient((request) async {
         // Verify the request contains the image
         final body = jsonDecode(request.body);
-        expect(body['messages'][0]['content'][1]['type'], 'image');
-        expect(body['messages'][0]['content'][1]['source']['type'], 'base64');
+        expect(body['messages'][0]['content'][1]['type'], 'image_url');
 
         return jsonResponse(
           {
-            'content': [
-              {'text': '{"answer": "x = 3", "steps": ["简化: 3x = 9", "除以3: x = 3"]}'}
+            'choices': [
+              {
+                'message': {
+                  'content': '{"answer": "x = 3", "steps": ["简化: 3x = 9", "除以3: x = 3"]}'
+                }
+              }
             ]
           },
           200,
@@ -182,8 +185,12 @@ void main() {
       final mockClient = MockClient((request) async {
         return jsonResponse(
           {
-            'content': [
-              {'text': '答案是 x = 7。'}
+            'choices': [
+              {
+                'message': {
+                  'content': '答案是 x = 7。'
+                }
+              }
             ]
           },
           200,

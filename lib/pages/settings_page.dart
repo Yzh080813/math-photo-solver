@@ -76,13 +76,13 @@ class _SettingsForm extends StatelessWidget {
           TextField(
             controller: controller,
             decoration: const InputDecoration(
-              hintText: '输入你的 Claude API Key',
+              hintText: '输入你的 DeepSeek API Key',
               border: OutlineInputBorder(),
             ),
             obscureText: true,
           ),
           const SizedBox(height: 8),
-          const Text('需要 Anthropic API Key。在 console.anthropic.com 获取。', style: TextStyle(color: Colors.grey, fontSize: 12)),
+          const Text('需要 DeepSeek API Key。在 platform.deepseek.com 获取。', style: TextStyle(color: Colors.grey, fontSize: 12)),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: onSave,

@@ -10,7 +10,7 @@ class AiService {
   AiService({required this.apiKey, http.Client? client})
       : _client = client ?? http.Client();
 
-  static const String _baseUrl = 'https://api.anthropic.com/v1/messages';
+  static const String _baseUrl = 'https://api.deepseek.com/v1/chat/completions';
 
   Future<AiResponse> solveProblem(String imagePath) async {
     final bytes = await File(imagePath).readAsBytes();
@@ -19,12 +19,11 @@ class AiService {
     final response = await _client.post(
       Uri.parse(_baseUrl),
       headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'Authorization': 'Bearer $apiKey',
         'content-type': 'application/json',
       },
       body: jsonEncode({
-        'model': 'claude-sonnet-4-6',
+        'model': 'deepseek-vision',
         'max_tokens': 1024,
         'messages': [
           {
@@ -36,11 +35,9 @@ class AiService {
                     '请用 JSON 格式回复，格式为：{"answer": "最终答案", "steps": ["步骤1", "步骤2", ...]}',
               },
               {
-                'type': 'image',
-                'source': {
-                  'type': 'base64',
-                  'media_type': 'image/jpeg',
-                  'data': base64Image,
+                'type': 'image_url',
+                'image_url': {
+                  'url': 'data:image/jpeg;base64,$base64Image',
                 },
               },
             ],
@@ -54,8 +51,7 @@ class AiService {
     }
 
     final body = jsonDecode(response.body);
-    final content = body['content'] as List;
-    final text = content[0]['text'] as String;
+    final text = body['choices'][0]['message']['content'] as String;
 
     return extractResponse(text);
   }
