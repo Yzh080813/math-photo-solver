@@ -4,12 +4,14 @@ import '../services/ai_service.dart';
 
 class ResultPage extends StatefulWidget {
   final String imagePath;
-  final AiService aiService;
+  final AiService? aiService;
+  final AiResponse? preloadedResult;
 
   const ResultPage({
     super.key,
     required this.imagePath,
-    required this.aiService,
+    this.aiService,
+    this.preloadedResult,
   });
 
   @override
@@ -17,19 +19,24 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
-  bool _loading = true;
+  bool _loading = false;
   String? _error;
   AiResponse? _result;
 
   @override
   void initState() {
     super.initState();
-    _solve();
+    if (widget.preloadedResult != null) {
+      _result = widget.preloadedResult;
+    } else {
+      _loading = true;
+      _solve();
+    }
   }
 
   Future<void> _solve() async {
     try {
-      final result = await widget.aiService.solveProblem(widget.imagePath);
+      final result = await widget.aiService!.solveProblem(widget.imagePath);
       setState(() {
         _result = result;
         _loading = false;

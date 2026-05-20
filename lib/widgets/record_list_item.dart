@@ -4,13 +4,13 @@ import '../models/record.dart';
 
 class RecordListItem extends StatelessWidget {
   final Record record;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final VoidCallback onDelete;
 
   const RecordListItem({
     super.key,
     required this.record,
-    required this.onTap,
+    this.onTap,
     required this.onDelete,
   });
 

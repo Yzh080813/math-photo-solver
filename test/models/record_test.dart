@@ -27,11 +27,11 @@ void main() {
         'id': 'test-2',
         'imagePath': '/path.jpg',
         'answer': '42',
-        'steps': '',
+        'steps': <String>[],
         'createdAt': '2026-05-20T00:00:00.000',
       };
       final record = Record.fromMap(map);
-      expect(record.steps, ['']);
+      expect(record.steps, isEmpty);
     });
   });
 }

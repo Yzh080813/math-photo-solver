@@ -17,7 +17,7 @@ class Record {
     'id': id,
     'imagePath': imagePath,
     'answer': answer,
-    'steps': steps.join('||'),
+    'steps': steps,
     'createdAt': createdAt.toIso8601String(),
   };
 
@@ -25,7 +25,7 @@ class Record {
     id: map['id'] as String,
     imagePath: map['imagePath'] as String,
     answer: map['answer'] as String,
-    steps: (map['steps'] as String).split('||'),
+    steps: (map['steps'] as List).cast<String>(),
     createdAt: DateTime.parse(map['createdAt'] as String),
   );
 }

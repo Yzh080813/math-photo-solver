@@ -35,11 +35,18 @@ class _AppEntry extends StatefulWidget {
 class _AppEntryState extends State<_AppEntry> {
   bool _checking = true;
   bool _hasApiKey = false;
+  AiService? _aiService;
 
   @override
   void initState() {
     super.initState();
     _checkApiKey();
+  }
+
+  @override
+  void dispose() {
+    _aiService?.dispose();
+    super.dispose();
   }
 
   Future<void> _checkApiKey() async {
@@ -71,11 +78,12 @@ class _AppEntryState extends State<_AppEntry> {
               const Text('请先设置 API Key 才能使用', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const SettingsPage()),
                   );
+                  _checkApiKey();
                 },
                 child: const Text('前往设置'),
               ),
@@ -93,7 +101,8 @@ class _AppEntryState extends State<_AppEntry> {
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        return HomePage(aiService: AiService(apiKey: snapshot.data!));
+        _aiService ??= AiService(apiKey: snapshot.data!);
+        return HomePage(aiService: _aiService!);
       },
     );
   }

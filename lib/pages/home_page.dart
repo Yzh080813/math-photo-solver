@@ -64,8 +64,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _deleteRecord(Record record) async {
-    await _storage.deleteRecord(record.id);
-    _loadRecords();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('删除记录'),
+        content: const Text('确定要删除这条解题记录吗？'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('删除')),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await _storage.deleteRecord(record.id);
+      _loadRecords();
+    }
   }
 
   @override
@@ -128,7 +141,19 @@ class _HomePageState extends State<HomePage> {
                       return RecordListItem(
                         record: record,
                         onTap: () {
-                          // 点击查看历史结果
+                          final preloaded = AiResponse(
+                            answer: record.answer,
+                            steps: record.steps,
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ResultPage(
+                                imagePath: record.imagePath,
+                                preloadedResult: preloaded,
+                              ),
+                            ),
+                          );
                         },
                         onDelete: () => _deleteRecord(record),
                       );
